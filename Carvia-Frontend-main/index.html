@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Carvia - Find your dream job across multiple platforms. Search Findwork, Jooble, Arbeitnow, Jobicy & LinkedIn in one place." />
+    
+    <!-- Theme Color for mobile browsers -->
+    <meta name="theme-color" content="#0F1117" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#FAFBFD" media="(prefers-color-scheme: light)" />
+
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="Carvia — Job Aggregator" />
+    <meta property="og:description" content="Find your dream job across multiple platforms in one unified interface." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://carvia.app.example.com" />
+    <!-- Replace with a real image path when available -->
+    <meta property="og:image" content="/vite.svg" />
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="/vite.svg" />
+
+    <title>Carvia — Job Aggregator</title>
+    <script>
+      (function() {
+        try {
+          var savedTheme = localStorage.getItem('carvia-theme');
+          var systemTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+          var theme = savedTheme || systemTheme;
+          document.documentElement.dataset.theme = theme;
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

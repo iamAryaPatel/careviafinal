@@ -1,0 +1,15 @@
+services:
+  api:
+    build: .
+    env_file: .env
+    ports:
+      - "5000:5000"
+    depends_on:
+      redis:
+        condition: service_started
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+# Add a BullMQ worker service when queue-backed scheduling is enabled in production.
