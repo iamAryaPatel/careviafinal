@@ -39,6 +39,14 @@ export async function syncAllSources(keyword = "") {
 
 
         let jobs = [];
+        
+        console.log("SOURCE RAW COUNTS:", {
+        Jooble: results[0].status === "fulfilled" ? results[0].value.length : 0,
+        Jobicy: results[1].status === "fulfilled" ? results[1].value.length : 0,
+        Arbeitnow: results[2].status === "fulfilled" ? results[2].value.length : 0,
+        Remotive: results[3].status === "fulfilled" ? results[3].value.length : 0,
+        TheMuse: results[4].status === "fulfilled" ? results[4].value.length : 0
+});
 
 
         results.forEach(result => {

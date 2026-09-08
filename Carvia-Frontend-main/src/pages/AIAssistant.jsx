@@ -1,612 +1,445 @@
-import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState } from 'react';
 
-const suggestions = [
-  {
-    title: "Find jobs for me",
-    text: "Find jobs matching my profile",
-    prompt: "Find the best jobs for my profile."
-  },
-  {
-    title: "Check my skill gap",
-    text: "See what skills I should improve",
-    prompt: "Check my current skill gap and tell me what skills I should improve."
-  },
-  {
-    title: "Skills for a role",
-    text: "What do I need for AI Engineer?",
-    prompt: "What skills do I need to become an AI Engineer?"
-  },
-  {
-    title: "Improve my career",
-    text: "Give me practical career advice",
-    prompt: "Give me practical advice to improve my career."
+const categories = {
+  "🤖 AI & Machine Learning": [
+    "What skills are required for an AI Engineer?",
+    "What is the AI Engineer roadmap?",
+    "How can I become an AI Engineer?",
+    "What Python skills are needed for AI?",
+    "What mathematics is required for AI?",
+    "What Machine Learning topics should I learn?",
+    "What ML algorithms should I learn?",
+    "What is Deep Learning?",
+    "What is NLP?",
+    "What is Computer Vision?",
+    "What is Generative AI?",
+    "What is an LLM?",
+    "What is RAG?",
+    "What are embeddings?",
+    "What is prompt engineering?",
+    "Should I learn TensorFlow or PyTorch?",
+    "What AI projects should I build?",
+    "How can I prepare for an AI interview?",
+    "What AI certifications are useful?",
+    "Can I get an AI job as a fresher?"
+  ],
+
+  "📊 Data Engineering": [
+    "What is the Data Engineer roadmap?",
+    "How can I become a Data Engineer?",
+    "What skills are required for Data Engineering?",
+    "How important is SQL for Data Engineering?",
+    "How much Python is needed for Data Engineering?",
+    "What databases should I learn?",
+    "What is ETL?",
+    "What is ELT?",
+    "What is a data pipeline?",
+    "What is Apache Spark?",
+    "What is data warehousing?",
+    "What is PostgreSQL?",
+    "Should I learn AWS for Data Engineering?",
+    "Should I learn Azure for Data Engineering?",
+    "What cloud skills are needed?",
+    "What Data Engineering projects should I build?",
+    "How can I prepare for a Data Engineer interview?",
+    "Data Engineer vs Data Scientist?",
+    "What SQL topics should I learn?",
+    "Can I become a Data Engineer as a fresher?"
+  ],
+
+  "💻 Software Development": [
+    "How can I become a Software Developer?",
+    "What is the Software Developer roadmap?",
+    "What frontend skills should I learn?",
+    "What backend skills should I learn?",
+    "What is Full Stack Development?",
+    "Should I learn HTML and CSS?",
+    "How important is JavaScript?",
+    "Should I learn React?",
+    "Should I learn Node.js?",
+    "What is an API?",
+    "What is REST API?",
+    "What is FastAPI?",
+    "How important is Git and GitHub?",
+    "What DSA topics should I learn?",
+    "What projects should I build?",
+    "How can I prepare for coding interviews?",
+    "How can I get my first developer job?",
+    "Frontend vs Backend development?",
+    "React vs Angular?",
+    "Can I become a developer as a fresher?"
+  ],
+
+  "🐍 Python & Programming": [
+    "How can I improve my Python?",
+    "What Python topics should I learn?",
+    "What Python projects should I build?",
+    "How much Python is enough for a job?",
+    "What is Object Oriented Programming?",
+    "What are Python functions?",
+    "What are Python modules?",
+    "What is exception handling?",
+    "What is a virtual environment?",
+    "What are Python libraries?",
+    "What is FastAPI?",
+    "What is Flask?",
+    "What is an API?",
+    "What is JSON?",
+    "How can I practice Python?",
+    "What Python interview questions should I prepare?",
+    "What Python skills are needed for AI?",
+    "What Python skills are needed for Data Engineering?",
+    "Python vs JavaScript?",
+    "How can I build a Python portfolio?"
+  ],
+
+  "🗄️ SQL & Databases": [
+    "How can I learn SQL?",
+    "What SQL topics are important for jobs?",
+    "What are SQL joins?",
+    "What is a primary key?",
+    "What is a foreign key?",
+    "What is database normalization?",
+    "What is PostgreSQL?",
+    "PostgreSQL vs MySQL?",
+    "What is a database index?",
+    "What is a SQL view?",
+    "What is a stored procedure?",
+    "What is a transaction?",
+    "What is GROUP BY in SQL?",
+    "What is a subquery?",
+    "What is a CTE?",
+    "What SQL projects should I build?",
+    "How can I prepare for SQL interviews?",
+    "What SQL questions are asked in interviews?",
+    "How much SQL should I learn?",
+    "SQL roadmap for beginners?"
+  ],
+
+  "📄 Resume": [
+    "How can I make a good resume?",
+    "What should I include in my resume?",
+    "How can I make my resume ATS friendly?",
+    "What is an ATS?",
+    "How long should my resume be?",
+    "What projects should I include?",
+    "How should I describe my projects?",
+    "Should I include certifications?",
+    "What skills should I mention?",
+    "How should I write my professional summary?",
+    "How can I improve my resume?",
+    "What mistakes should I avoid in my resume?",
+    "Should a fresher have a one page resume?",
+    "How should I list my education?",
+    "How should I list technical skills?",
+    "How should I write project achievements?",
+    "Should I include GitHub?",
+    "Should I include LinkedIn?",
+    "How can I make my resume stand out?",
+    "How often should I update my resume?"
+  ],
+
+  "🎯 Job Search": [
+    "How can I get my first job?",
+    "How can I find entry-level jobs?",
+    "How can I find internships?",
+    "How can I find remote jobs?",
+    "How should I search for jobs?",
+    "How many jobs should I apply to?",
+    "How can I improve my job matches?",
+    "What should I do after applying?",
+    "When should I follow up with recruiters?",
+    "How can I find jobs without experience?",
+    "How can I get a job as a fresher?",
+    "How can I transition into AI?",
+    "How can I transition into Data Engineering?",
+    "How can I transition from developer to AI Engineer?",
+    "How can I find jobs based on my skills?",
+    "How can I use LinkedIn for job search?",
+    "How should I contact recruiters?",
+    "How can I improve my chances of getting shortlisted?",
+    "How many applications should I send each week?",
+    "What should I do if I keep getting rejected?"
+  ],
+
+  "🎤 Interview Preparation": [
+    "How should I prepare for interviews?",
+    "How should I answer Tell me about yourself?",
+    "What AI interview questions should I prepare?",
+    "What Python interview questions should I prepare?",
+    "What SQL interview questions should I prepare?",
+    "What Data Engineering interview questions should I prepare?",
+    "What Software Development interview questions should I prepare?",
+    "How should I explain my project?",
+    "How should I explain my strengths?",
+    "How should I answer weakness questions?",
+    "How should I handle HR interviews?",
+    "What should I do before an interview?",
+    "What should I do after an interview?",
+    "How can I improve my communication skills?",
+    "How can I reduce interview anxiety?",
+    "What technical topics should I revise?",
+    "How should I prepare for coding rounds?",
+    "What questions should I ask the interviewer?",
+    "What are common interview mistakes?",
+    "How can I improve my interview performance?"
+  ],
+
+  "🚀 Projects & Portfolio": [
+    "What AI projects should I build?",
+    "What beginner AI projects can I build?",
+    "What advanced AI projects can I build?",
+    "What Machine Learning projects should I build?",
+    "What Data Engineering projects should I build?",
+    "What Python projects should I build?",
+    "What Full Stack projects should I build?",
+    "What projects look good on a resume?",
+    "How many projects should I have?",
+    "How can I make my project stand out?",
+    "How should I document my project?",
+    "How should I upload my project to GitHub?",
+    "What project should I build as a fresher?",
+    "What project can demonstrate SQL skills?",
+    "What project can demonstrate API skills?",
+    "What project can demonstrate React skills?",
+    "What project can demonstrate AI skills?",
+    "How can I create a strong portfolio?",
+    "What should my GitHub profile contain?",
+    "How can I explain my project in an interview?"
+  ],
+
+  "🎓 Career & Fresher": [
+    "Which career path is best for me?",
+    "Should I choose AI or Data Engineering?",
+    "AI Engineer vs Software Developer?",
+    "Data Engineer vs Data Scientist?",
+    "Should I learn AI as a fresher?",
+    "Can I get an AI job without experience?",
+    "Can I get a job without experience?",
+    "Can I get a job without a degree?",
+    "How can I get experience as a fresher?",
+    "How can I build a strong portfolio?",
+    "What should I learn in 3 months?",
+    "What should I learn in 6 months?",
+    "What should I learn before applying for jobs?",
+    "How can I choose the right career?",
+    "How can I switch careers?",
+    "Should I focus on one technology?",
+    "How many technologies should I learn?",
+    "Should I learn cloud technology?",
+    "What skills are most valuable for freshers?",
+    "How can I become job ready?"
+  ]
+};
+
+const answers = {
+  "What skills are required for an AI Engineer?":
+    "AI Engineers generally need Python, SQL, Machine Learning fundamentals, data handling, APIs, Git, model deployment and basic cloud knowledge. For advanced roles, learn Deep Learning, Generative AI and RAG.",
+
+  "What is the AI Engineer roadmap?":
+    "Start with Python and SQL, then learn statistics and Machine Learning. Continue with Deep Learning, APIs, Git, deployment, Generative AI and RAG. Build 3–4 practical projects and prepare for interviews.",
+
+  "How can I become an AI Engineer?":
+    "Build your foundation in Python, SQL and Machine Learning. Then learn Deep Learning, APIs, deployment and modern Generative AI concepts. Create practical projects and publish them on GitHub.",
+
+  "What Python skills are needed for AI?":
+    "Focus on functions, OOP, data structures, NumPy, Pandas, APIs, exception handling, virtual environments and writing clean Python code.",
+
+  "What is Generative AI?":
+    "Generative AI refers to systems that generate new content such as text, images, audio or code. Important topics include LLMs, prompting, embeddings, RAG and model evaluation.",
+
+  "What is RAG?":
+    "RAG means Retrieval-Augmented Generation. It retrieves relevant information from a knowledge source and uses that information to generate a more grounded response.",
+
+  "How can I become a Data Engineer?":
+    "Start with SQL and Python. Then learn databases, ETL/ELT, data pipelines, data warehousing, Spark and cloud platforms. Build pipeline projects to demonstrate your skills.",
+
+  "What is ETL?":
+    "ETL stands for Extract, Transform and Load. Data is collected from sources, transformed into a useful format and then loaded into a target system such as a database or warehouse.",
+
+  "What is a data pipeline?":
+    "A data pipeline is a process that moves data from one or more sources through transformation and processing steps into a destination where it can be analyzed or used.",
+
+  "How can I become a Software Developer?":
+    "Choose a development path, learn the fundamentals, practice coding and build projects. For web development, start with HTML, CSS and JavaScript, then learn React and a backend technology such as Node.js.",
+
+  "Should I learn React?":
+    "React is useful if you want to work in modern frontend development. Learn JavaScript fundamentals first, then components, props, state, hooks, routing and API integration.",
+
+  "How can I improve my Python?":
+    "Practice Python every day through small programs and projects. Focus on functions, OOP, data structures, error handling, APIs and commonly used libraries.",
+
+  "How can I learn SQL?":
+    "Start with SELECT, WHERE, ORDER BY and GROUP BY. Then learn joins, subqueries, CTEs, window functions, indexes and query optimization. Practice with real datasets.",
+
+  "How can I make my resume ATS friendly?":
+    "Use a simple structure, standard section headings, relevant keywords and readable formatting. Avoid unnecessary graphics, tables and complicated layouts.",
+
+  "What is an ATS?":
+    "ATS stands for Applicant Tracking System. Recruiters use ATS software to organize applications and identify resumes containing relevant information and keywords.",
+
+  "How can I get my first job?":
+    "Build job-ready skills, create 2–4 strong projects, prepare your resume and GitHub, apply consistently and practice interviews. Focus on roles that match your current skills.",
+
+  "How can I find internships?":
+    "Search for internships using job portals, company career pages and professional networks. Keep your resume focused on skills and projects, and apply consistently.",
+
+  "How should I prepare for interviews?":
+    "Review the skills listed in the job description, revise fundamentals, practice technical questions and prepare a clear explanation of your projects. Also prepare common HR questions.",
+
+  "How should I answer Tell me about yourself?":
+    "Give a short professional introduction: your education, relevant technical skills, important projects, experience if any, and the type of role you are targeting.",
+
+  "What AI projects should I build?":
+    "Build projects that solve practical problems. Examples include a medical information chatbot, job recommendation system, document Q&A system, resume analyzer or RAG-based knowledge assistant.",
+
+  "How many projects should I have?":
+    "For a fresher, 2–4 strong projects are usually better than many unfinished projects. Choose projects that demonstrate different skills relevant to your target role.",
+
+  "Which career path is best for me?":
+    "Choose based on your interests and strengths. AI suits people interested in intelligent systems and ML, Data Engineering suits people who enjoy data pipelines and databases, while Software Development suits people who enjoy building applications."
+};
+
+function getAnswer(question) {
+  if (answers[question]) return answers[question];
+
+  const lower = question.toLowerCase();
+
+  if (lower.includes('resume')) {
+    return "Keep your resume concise, job-focused and easy to read. Highlight relevant skills, measurable project work, GitHub and technologies related to the role you want.";
   }
-];
+
+  if (lower.includes('interview')) {
+    return "Prepare the fundamentals related to your target role, practice technical questions and be ready to clearly explain your projects and contributions.";
+  }
+
+  if (lower.includes('project')) {
+    return "Choose a practical project related to your target role. Make sure it has a clear README, clean code, useful features and a clear explanation of the technologies you used.";
+  }
+
+  if (lower.includes('python')) {
+    return "Focus on Python fundamentals, functions, OOP, data structures, error handling, APIs and practical libraries. Regular project-based practice is the best way to improve.";
+  }
+
+  if (lower.includes('sql') || lower.includes('database')) {
+    return "Learn SQL fundamentals first, followed by joins, aggregation, subqueries, CTEs, window functions, indexes and query optimization. Practice with real datasets.";
+  }
+
+  return "This is a useful career topic. Focus on practical skills, build relevant projects and keep your learning aligned with the type of job you want.";
+}
 
 export default function AIAssistant() {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      role: "assistant",
-      text: "Hi! I’m here to help with your job search and career decisions. Tell me what you’re looking for, or choose an option below."
-    }
-  ]);
+  const [selectedQuestion, setSelectedQuestion] = useState('');
+  const [answer, setAnswer] = useState('');
 
-  const [input, setInput] = useState("");
-  const [typing, setTyping] = useState(false);
-  const messagesEndRef = useRef(null);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: "smooth"
-    });
-  }, [messages, typing]);
-
-  const sendMessage = async (text) => {
-    const message = text.trim();
-
-    if (!message || typing) return;
-
-    const userMessage = {
-      id: Date.now(),
-      role: "user",
-      text: message
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setInput("");
-    setTyping(true);
-
-    // Temporary response.
-    // We will connect this to the Carvia AI backend next.
-    setTimeout(() => {
-      let reply =
-        "I can help you with job searches, required skills, skill gaps and career decisions. Tell me your target role and experience level, and I’ll guide you from there.";
-
-      const lower = message.toLowerCase();
-
-      if (lower.includes("ai engineer")) {
-        reply =
-          "For an AI Engineer role, focus on Python, SQL, machine learning fundamentals, APIs and Git. Depending on the role, FastAPI, Docker, RAG and cloud deployment can also make your profile stronger.";
-      } else if (
-        lower.includes("frontend") ||
-        lower.includes("front end")
-      ) {
-        reply =
-          "For frontend development, build strong fundamentals in HTML, CSS and JavaScript first. React, responsive design, REST APIs, Git and TypeScript are useful next steps.";
-      } else if (
-        lower.includes("skill gap") ||
-        lower.includes("skills")
-      ) {
-        reply =
-          "I can identify your skill gap using your Carvia profile. The next version will compare your current skills with the requirements of your target role and highlight the most important areas to improve.";
-      } else if (
-        lower.includes("job") ||
-        lower.includes("career")
-      ) {
-        reply =
-          "Absolutely. Tell me the role you want, your experience level and preferred location. I can then help you understand which opportunities and skills are the best fit.";
-      }
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          role: "assistant",
-          text: reply
-        }
-      ]);
-
-      setTyping(false);
-    }, 700);
+  const handleQuestion = (question) => {
+    setSelectedQuestion(question);
+    setAnswer(getAnswer(question));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    sendMessage(input);
+  const handleReset = () => {
+    setSelectedQuestion('');
+    setAnswer('');
   };
 
   return (
-    <main className="shell ai-page">
-      <style>{`
-        .ai-page {
-          min-height: calc(100vh - 80px);
-          padding-top: 32px;
-          padding-bottom: 48px;
-        }
-
-        .ai-layout {
-          max-width: 1180px;
-          margin: 0 auto;
-          display: grid;
-          grid-template-columns: 250px minmax(0, 1fr);
-          gap: 24px;
-        }
-
-        .ai-sidebar {
-          align-self: start;
-          position: sticky;
-          top: 24px;
-        }
-
-        .ai-sidebar-card {
-          background: #fff;
-          border: 1px solid rgba(20, 30, 45, 0.09);
-          border-radius: 18px;
-          padding: 20px;
-          box-shadow: 0 8px 30px rgba(20, 30, 45, 0.05);
-        }
-
-        .ai-brand {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-bottom: 22px;
-        }
-
-        .ai-brand-mark {
-          width: 40px;
-          height: 40px;
-          border-radius: 12px;
-          display: grid;
-          place-items: center;
-          background: #111827;
-          color: white;
-          font-size: 18px;
-          font-weight: 700;
-        }
-
-        .ai-brand-text b {
-          display: block;
-          font-size: 15px;
-        }
-
-        .ai-brand-text span {
-          display: block;
-          margin-top: 2px;
-          font-size: 12px;
-          color: #7b8492;
-        }
-
-        .ai-nav-title {
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: .08em;
-          text-transform: uppercase;
-          color: #929aa6;
-          margin: 0 0 10px;
-        }
-
-        .ai-side-link {
-          display: block;
-          padding: 10px 11px;
-          border-radius: 10px;
-          color: #4b5563;
-          text-decoration: none;
-          font-size: 14px;
-          margin-bottom: 4px;
-        }
-
-        .ai-side-link:hover {
-          background: #f5f6f8;
-          color: #111827;
-        }
-
-        .ai-side-note {
-          margin-top: 20px;
-          padding-top: 18px;
-          border-top: 1px solid #eceef1;
-          font-size: 12px;
-          line-height: 1.6;
-          color: #7b8492;
-        }
-
-        .ai-chat {
-          min-height: 680px;
-          background: #fff;
-          border: 1px solid rgba(20, 30, 45, 0.09);
-          border-radius: 22px;
-          box-shadow: 0 12px 40px rgba(20, 30, 45, 0.06);
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .ai-chat-header {
-          min-height: 76px;
-          padding: 18px 24px;
-          border-bottom: 1px solid #eceef1;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 16px;
-        }
-
-        .ai-header-left {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .ai-status-dot {
-          width: 9px;
-          height: 9px;
-          border-radius: 50%;
-          background: #36a269;
-          box-shadow: 0 0 0 4px rgba(54, 162, 105, 0.10);
-        }
-
-        .ai-header-title b {
-          display: block;
-          font-size: 16px;
-        }
-
-        .ai-header-title span {
-          display: block;
-          margin-top: 3px;
-          font-size: 12px;
-          color: #7b8492;
-        }
-
-        .ai-header-action {
-          text-decoration: none;
-          font-size: 13px;
-          color: #596273;
-        }
-
-        .ai-messages {
-          flex: 1;
-          padding: 28px 30px;
-          overflow-y: auto;
-          background: #fcfcfd;
-        }
-
-        .ai-message-row {
-          display: flex;
-          margin-bottom: 18px;
-        }
-
-        .ai-message-row.user {
-          justify-content: flex-end;
-        }
-
-        .ai-avatar {
-          width: 32px;
-          height: 32px;
-          flex: 0 0 32px;
-          margin-right: 10px;
-          border-radius: 10px;
-          display: grid;
-          place-items: center;
-          background: #111827;
-          color: #fff;
-          font-size: 12px;
-          font-weight: 700;
-        }
-
-        .ai-bubble {
-          max-width: min(680px, 82%);
-          padding: 13px 16px;
-          border-radius: 15px;
-          background: #fff;
-          border: 1px solid #e8eaee;
-          color: #303846;
-          font-size: 14px;
-          line-height: 1.65;
-          box-shadow: 0 3px 12px rgba(20, 30, 45, 0.03);
-        }
-
-        .ai-message-row.user .ai-bubble {
-          background: #111827;
-          color: #fff;
-          border-color: #111827;
-          border-bottom-right-radius: 5px;
-        }
-
-        .ai-message-row.assistant .ai-bubble {
-          border-bottom-left-radius: 5px;
-        }
-
-        .ai-typing {
-          display: flex;
-          align-items: center;
-          gap: 5px;
-          padding: 15px 17px;
-          width: fit-content;
-          border-radius: 15px;
-          background: #fff;
-          border: 1px solid #e8eaee;
-        }
-
-        .ai-typing i {
-          width: 5px;
-          height: 5px;
-          border-radius: 50%;
-          background: #7b8492;
-          animation: aiPulse 1.1s infinite ease-in-out;
-        }
-
-        .ai-typing i:nth-child(2) {
-          animation-delay: .15s;
-        }
-
-        .ai-typing i:nth-child(3) {
-          animation-delay: .3s;
-        }
-
-        @keyframes aiPulse {
-          0%, 70%, 100% {
-            opacity: .3;
-            transform: translateY(0);
-          }
-          35% {
-            opacity: 1;
-            transform: translateY(-3px);
-          }
-        }
-
-        .ai-suggestions {
-          padding: 0 30px 22px;
-          background: #fcfcfd;
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
-        }
-
-        .ai-suggestion {
-          text-align: left;
-          background: #fff;
-          border: 1px solid #e5e7eb;
-          border-radius: 13px;
-          padding: 12px 14px;
-          cursor: pointer;
-          transition: .18s ease;
-        }
-
-        .ai-suggestion:hover {
-          border-color: #cfd4dc;
-          transform: translateY(-1px);
-          box-shadow: 0 5px 16px rgba(20, 30, 45, .05);
-        }
-
-        .ai-suggestion b {
-          display: block;
-          color: #252b36;
-          font-size: 13px;
-          margin-bottom: 3px;
-        }
-
-        .ai-suggestion span {
-          color: #858d99;
-          font-size: 11px;
-        }
-
-        .ai-composer {
-          padding: 18px 24px 22px;
-          border-top: 1px solid #eceef1;
-          background: #fff;
-        }
-
-        .ai-input-wrap {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 7px 8px 7px 15px;
-          border: 1px solid #dfe3e8;
-          border-radius: 15px;
-          background: #fff;
-          transition: border-color .18s ease, box-shadow .18s ease;
-        }
-
-        .ai-input-wrap:focus-within {
-          border-color: #aeb6c2;
-          box-shadow: 0 0 0 3px rgba(17, 24, 39, .05);
-        }
-
-        .ai-input {
-          flex: 1;
-          min-width: 0;
-          border: 0;
-          outline: 0;
-          background: transparent;
-          color: #202631;
-          font: inherit;
-          font-size: 14px;
-        }
-
-        .ai-input::placeholder {
-          color: #9aa1ac;
-        }
-
-        .ai-send {
-          width: 38px;
-          height: 38px;
-          border: 0;
-          border-radius: 11px;
-          background: #111827;
-          color: #fff;
-          cursor: pointer;
-          font-size: 16px;
-        }
-
-        .ai-send:disabled {
-          opacity: .4;
-          cursor: not-allowed;
-        }
-
-        .ai-disclaimer {
-          margin: 9px 3px 0;
-          color: #a0a6b0;
-          font-size: 10px;
-        }
-
-        @media (max-width: 850px) {
-          .ai-layout {
-            grid-template-columns: 1fr;
-          }
-
-          .ai-sidebar {
-            display: none;
-          }
-
-          .ai-page {
-            padding: 16px 10px 30px;
-          }
-
-          .ai-chat {
-            min-height: calc(100vh - 120px);
-          }
-
-          .ai-messages {
-            padding: 22px 16px;
-          }
-
-          .ai-suggestions {
-            padding: 0 16px 16px;
-            grid-template-columns: 1fr;
-          }
-
-          .ai-composer {
-            padding: 14px 16px 18px;
-          }
-        }
-      `}</style>
-
-      <div className="ai-layout">
-
-        {/* Left navigation */}
-        <aside className="ai-sidebar">
-          <div className="ai-sidebar-card">
-
-            <div className="ai-brand">
-              <div className="ai-brand-mark">C</div>
-              <div className="ai-brand-text">
-                <b>Carvia Assistant</b>
-                <span>Career workspace</span>
-              </div>
-            </div>
-
-            <p className="ai-nav-title">Explore</p>
-
-            <Link to="/jobs" className="ai-side-link">
-              Find jobs
-            </Link>
-
-            <Link to="/profile" className="ai-side-link">
-              My profile
-            </Link>
-
-            <Link to="/complete-profile" className="ai-side-link">
-              Complete profile
-            </Link>
-
-            <div className="ai-side-note">
-              The assistant uses your career information to make job and skill recommendations more relevant.
-            </div>
-
-          </div>
-        </aside>
-
-        {/* Chat */}
-        <section className="ai-chat">
-
-          <header className="ai-chat-header">
-            <div className="ai-header-left">
-              <span className="ai-status-dot" />
-
-              <div className="ai-header-title">
-                <b>Career Assistant</b>
-                <span>Job search & career guidance</span>
-              </div>
-            </div>
-
-            <Link to="/jobs" className="ai-header-action">
-              Browse jobs →
-            </Link>
-          </header>
-
-          <div className="ai-messages">
-
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`ai-message-row ${message.role}`}
-              >
-
-                {message.role === "assistant" && (
-                  <div className="ai-avatar">C</div>
-                )}
-
-                <div className="ai-bubble">
-                  {message.text}
-                </div>
-
-              </div>
-            ))}
-
-            {typing && (
-              <div className="ai-message-row assistant">
-                <div className="ai-avatar">C</div>
-
-                <div className="ai-typing">
-                  <i />
-                  <i />
-                  <i />
-                </div>
-              </div>
-            )}
-
-            <div ref={messagesEndRef} />
-
-          </div>
-
-          {/* Suggested actions */}
-          {messages.length === 1 && (
-            <div className="ai-suggestions">
-              {suggestions.map((item) => (
-                <button
-                  key={item.title}
-                  className="ai-suggestion"
-                  onClick={() => sendMessage(item.prompt)}
-                >
-                  <b>{item.title}</b>
-                  <span>{item.text}</span>
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Composer */}
-          <form className="ai-composer" onSubmit={handleSubmit}>
-            <div className="ai-input-wrap">
-
-              <input
-                className="ai-input"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about jobs, skills or your career..."
-                disabled={typing}
-              />
-
-              <button
-                type="submit"
-                className="ai-send"
-                disabled={!input.trim() || typing}
-                aria-label="Send message"
-              >
-                ↑
-              </button>
-
-            </div>
-
-            <p className="ai-disclaimer">
-              Carvia Assistant is designed for job search and career guidance.
+    <main className="shell">
+      <section
+        className="dashboard-panel"
+        style={{
+          padding: '28px',
+          maxWidth: '1000px',
+          margin: '30px auto'
+        }}
+      >
+        <div className="eyebrow">
+          <i /> Career Assistant
+        </div>
+
+        <h1 style={{ marginTop: '8px' }}>
+          Career guidance for your next move
+        </h1>
+
+        <p style={{ color: 'var(--muted, #94a3b8)' }}>
+          Select a question below to get career guidance.
+        </p>
+
+        {selectedQuestion && (
+          <div
+            style={{
+              marginTop: '24px',
+              padding: '20px',
+              borderRadius: '14px',
+              border: '1px solid var(--line, #263244)',
+              background: 'var(--card-bg, rgba(255,255,255,0.03))'
+            }}
+          >
+            <small style={{ color: 'var(--muted, #94a3b8)' }}>
+              Your question
+            </small>
+
+            <h3 style={{ margin: '8px 0 16px' }}>
+              {selectedQuestion}
+            </h3>
+
+            <p style={{ lineHeight: 1.7 }}>
+              {answer}
             </p>
-          </form>
 
-        </section>
-      </div>
+            <button
+              className="secondary-button"
+              onClick={handleReset}
+              style={{ marginTop: '12px' }}
+            >
+              ← Browse questions
+            </button>
+          </div>
+        )}
+
+        <div style={{ marginTop: '28px' }}>
+          {Object.entries(categories).map(([category, questions]) => (
+            <div
+              key={category}
+              style={{
+                marginBottom: '30px'
+              }}
+            >
+              <h2 style={{ marginBottom: '14px' }}>
+                {category}
+              </h2>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns:
+                    'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '10px'
+                }}
+              >
+                {questions.map((question) => (
+                  <button
+                    key={question}
+                    type="button"
+                    onClick={() => handleQuestion(question)}
+                    style={{
+                      textAlign: 'left',
+                      padding: '13px 15px',
+                      borderRadius: '10px',
+                      border: '1px solid var(--line, #263244)',
+                      background: 'var(--card-bg, rgba(255,255,255,0.03))',
+                      color: 'var(--text)',
+                      cursor: 'pointer',
+                      lineHeight: 1.4
+                    }}
+                  >
+                    {question}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }

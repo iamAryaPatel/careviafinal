@@ -12,7 +12,7 @@ export async function getJoobleJobs(keyword = "developer") {
         const response = await axios.post(
             url,
             {
-                keywords: keyword,
+                keywords: keyword || "developer",
                 location: "India",
                 page: 1
             },

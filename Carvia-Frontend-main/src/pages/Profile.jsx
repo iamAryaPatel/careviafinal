@@ -600,6 +600,7 @@ allow_recruiter_contact:
   <input
     id="resume-upload"
     type="file"
+    
     accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     onChange={handleResumeUpload}
     style={{ display: 'none' }}
