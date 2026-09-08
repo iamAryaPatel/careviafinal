@@ -47,17 +47,15 @@ app.use(
 
 app.use(
     cors({
-        origin: [
-            "http://localhost:5173",
-            "http://localhost:3000",
-            "https://carvia-jobs.vercel.app"
-        ]
-    })
-);
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "https://carvia-frontend-main.vercel.app"
+  ]
+}));
 
 
 app.use(express.json());
-
 
 
 // --------------------
