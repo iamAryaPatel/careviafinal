@@ -187,12 +187,20 @@ export function AuthProvider({ children }) {
   };
 
 
-  const signUpWithPassword = async (email, password, options = {}) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options,
-    });
+
+const signUpWithPassword = async (email, password, options = {}) => {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      ...options,
+      emailRedirectTo: "https://carvia-jobs.vercel.app/auth",
+    },
+  });
+
+  return { data, error };
+};
+
     if (error) throw error;
     if (data?.user) {
       const initialProfile = {
